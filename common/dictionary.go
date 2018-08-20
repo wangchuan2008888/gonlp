@@ -4,7 +4,6 @@ import (
 	"os"
 	"bufio"
 	"strconv"
-	"fmt"
 	"regexp"
 )
 
@@ -15,8 +14,12 @@ type Dictionary interface {
 }
 
 type WordTag struct {
-	Pos   string
-	Count int
+	Pos   []string
+	Count []int
+}
+
+func NewWordTag(n int) *WordTag {
+	return &WordTag{make([]string,0, n), make([]int,0, n)}
 }
 
 type HashMapDictionary struct {
@@ -26,6 +29,21 @@ type HashMapDictionary struct {
 func newHashMapDictionary() *HashMapDictionary {
 	m := make(map[string]*WordTag)
 	return &HashMapDictionary{m}
+}
+func loadLine(line []string) (rslt *WordTag) {
+	_len := len(line)
+	rslt = NewWordTag(_len / 2)
+	i := 0
+	for {
+		rslt.Pos = append(rslt.Pos, line[i])
+		value, _ := strconv.Atoi(line[i+1])
+		rslt.Count = append(rslt.Count, value)
+		i += 2
+		if i > _len-1{
+			break
+		}
+	}
+	return
 }
 func LoadHashDictionary(dictionary_path string) *HashMapDictionary {
 	dictionary_file, err := os.Open(dictionary_path)
@@ -41,18 +59,10 @@ func LoadHashDictionary(dictionary_path string) *HashMapDictionary {
 	for dictionary_scanner.Scan() {
 		line := dictionary_scanner.Text()
 		eles := splitter.Split(line, -1)
-		if len(eles) < 3 {
-			fmt.Printf("line broken %s\n", line)
-			fmt.Println(eles)
-			continue
-		}
+
 		word := eles[0]
-		pos := eles[1]
-		count, erro := strconv.Atoi(eles[2])
-		if erro != nil {
-			panic(erro)
-		}
-		hash_dict.word_map[word] = &WordTag{pos, count}
+		tag := loadLine(eles[1:])
+		hash_dict.word_map[word] = tag
 		counter += 1
 	}
 	println("loaded %d words", counter)
