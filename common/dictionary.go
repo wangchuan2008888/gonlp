@@ -14,12 +14,13 @@ type Dictionary interface {
 }
 
 type WordTag struct {
-	Pos   []string
-	Count []int
+	Pos            []string
+	Count          []int
+	TotalFrequency int
 }
 
 func NewWordTag(n int) *WordTag {
-	return &WordTag{make([]string,0, n), make([]int,0, n)}
+	return &WordTag{make([]string, 0, n), make([]int, 0, n), 0}
 }
 
 type HashMapDictionary struct {
@@ -37,12 +38,14 @@ func loadLine(line []string) (rslt *WordTag) {
 	for {
 		rslt.Pos = append(rslt.Pos, line[i])
 		value, _ := strconv.Atoi(line[i+1])
+		rslt.TotalFrequency += value
 		rslt.Count = append(rslt.Count, value)
 		i += 2
-		if i > _len-1{
+		if i > _len-1 {
 			break
 		}
 	}
+
 	return
 }
 func LoadHashDictionary(dictionary_path string) *HashMapDictionary {
