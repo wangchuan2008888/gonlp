@@ -22,6 +22,7 @@ type WordTag struct {
 func NewWordTag(n int) *WordTag {
 	return &WordTag{make([]string, 0, n), make([]int, 0, n), 0}
 }
+var EmptyWordTag = &WordTag{nil,nil,0}
 
 type HashMapDictionary struct {
 	word_map map[string]*WordTag
@@ -48,6 +49,17 @@ func loadLine(line []string) (rslt *WordTag) {
 
 	return
 }
+func add_dummy_ele(dict *HashMapDictionary, str string) {
+	char_arr := []rune(str)
+	for i := 1; i < len(char_arr); i++ {
+		tmp := string(char_arr[:i])
+		_, ok := dict.word_map[tmp]
+		if !ok {
+			dict.word_map[tmp] = EmptyWordTag
+		}
+	}
+
+}
 func LoadHashDictionary(dictionary_path string) *HashMapDictionary {
 	dictionary_file, err := os.Open(dictionary_path)
 	if err != nil {
@@ -66,6 +78,7 @@ func LoadHashDictionary(dictionary_path string) *HashMapDictionary {
 		word := eles[0]
 		tag := loadLine(eles[1:])
 		hash_dict.word_map[word] = tag
+		add_dummy_ele(hash_dict, word)
 		counter += 1
 	}
 	println("loaded %d words", counter)
