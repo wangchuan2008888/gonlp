@@ -21,7 +21,7 @@ func TestSimpleCut(t *testing.T) {
 	fmt.Println(dict_path)
 	dictionary := LoadHashDictionary(dict_path)
 
-	str := "由于需要指定配置文件，故需要在命令中运."
+	str := "他站起身来"
 	str_arr := []rune(str)
 	rslt := []string{}
 	_len := len(str_arr)
